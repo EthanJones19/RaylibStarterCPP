@@ -22,6 +22,7 @@
 #include "raylib.h"
 #include <iostream>
 
+
 unsigned int ElfHash(unsigned char* data)
 {
     unsigned int hash = 0;
@@ -37,6 +38,37 @@ unsigned int ElfHash(unsigned char* data)
         }
     }
 
+    return (hash & 0x7FFFFFFF);
+}
+
+
+unsigned int MyHash(unsigned char* data)
+{
+    //Hash is given a value
+    unsigned int hash = 0;
+    unsigned int x = 0;
+
+    //Iterates through the data and checks if its the end of the string
+    for (unsigned char* i = data; *i != '\0'; ++i)
+    {
+        //Sets hash to hash shifted by 4
+        hash = (hash << 4) + *i;
+
+        //Checking if hash is null and setting X
+        if ((x = hash & 0xF0000000L) != 0)
+        {
+            //Sets hash bit shifted to X by 24
+            hash = (x >> 24);
+            //X bit shifted into hash
+            hash &= x;
+            //Sets hash to be divided by 7
+            hash = hash / 7;
+
+
+        }
+    }
+
+    //Returns hash
     return (hash & 0x7FFFFFFF);
 }
 
@@ -62,7 +94,8 @@ int main(int argc, char* argv[])
         //----------------------------------------------------------------------------------
 
         std::cin >> input;
-        checkSum = ElfHash(input);
+        checkSum = MyHash(input);
+
         //----------------------------------------------------------------------------------
 
         // Draw
